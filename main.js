@@ -13,8 +13,9 @@ let map = L.map("map", {
 
 // thematische Layer
 let themaLayer = {
-    stations: L.featureGroup().addTo(map),
+    stations: L.featureGroup(),
     temperature: L.featureGroup().addTo(map),
+    wind: L.featureGroup()
 
 }
 
@@ -29,7 +30,8 @@ L.control.layers({
     "Esri WorldImagery": L.tileLayer.provider("Esri.WorldImagery")
 }, {
     "Wetterstationen": themaLayer.stations,
-    "Temperatur": themaLayer.temperature,
+    "Temperatur in °C": themaLayer.temperature,
+    "Wind": themaLayer.wind
 }).addTo(map);
 
 // Maßstab
@@ -66,6 +68,25 @@ function showTemperature(geojson) {
             })
         }
     }).addTo(themaLayer.temperature)
+}
+
+function showWind(geojson) {
+    L.geoJSON(geojson, {
+        filter: function (feature) {
+            if (feature.properties.WG >= 0 && feature.properties.WG < 200) {
+                return true;
+            }
+        },
+        pointToLayer: function (feature, latlng) {
+            let color = getColor(feature.properties.WG, COLORS.wind);
+            return L.marker(latlng, {
+                icon: L.divIcon({
+                    className: "aws-div-icon",
+                    html: `<span style="background-color: ${color}">${feature.properties.WG.toFixed(1)}</span>`
+                }),
+            })
+        }
+    }).addTo(themaLayer.wind);
 }
 
 
@@ -106,6 +127,7 @@ async function showStations(url) {
         }
     }).addTo(themaLayer.stations);
     showTemperature(geojson);
+    showWind(geojson);
 }
 
 
