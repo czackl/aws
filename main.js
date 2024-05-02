@@ -73,7 +73,7 @@ function showTemperature(geojson) {
 function showWind(geojson) {
     L.geoJSON(geojson, {
         filter: function (feature) {
-            if (feature.properties.WG >= 0 && feature.properties.WG < 200) {
+            if (feature.properties.WG > 0 && feature.properties.WG < 250) {
                 return true;
             }
         },
@@ -82,7 +82,7 @@ function showWind(geojson) {
             return L.marker(latlng, {
                 icon: L.divIcon({
                     className: "aws-div-icon",
-                    html: `<span style="background-color: ${color}">${feature.properties.WG.toFixed(1)}</span>`
+                    html: `<span style="background-color: ${color}"><i style="transform:rotate(${feature.properties.WR}deg)"class="fa-solid fa-circle-arrow-down"></i></span>`
                 }),
             })
         }
