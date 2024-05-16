@@ -115,7 +115,7 @@ async function showSnow(geoJSON) {
         pointToLayer: function (feature, latlng) {
             return L.marker(latlng, {
                 icon: L.divIcon({
-                    html: `<span style="background-color: ${getColor(feature.properties.HS, COLORS.snow)}">${feature.properties.HS.toFixed(0)}cm</span>`,
+                    html: `<span style="background-color: ${getColor(feature.properties.HS, COLORS.snow)}">${feature.properties.HS.toFixed(0)} cm</span>`,
                     className: "aws-div-icon",
                 })
             });
