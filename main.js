@@ -14,8 +14,9 @@ let map = L.map("map", {
 // thematische Layer
 let themaLayer = {
     stations: L.featureGroup(),
-    temperature: L.featureGroup().addTo(map),
-    wind: L.featureGroup()
+    temperature: L.featureGroup(),
+    wind: L.featureGroup(),
+    snow: L.featureGroup().addTo(map)
 
 }
 
@@ -31,7 +32,8 @@ L.control.layers({
 }, {
     "Wetterstationen": themaLayer.stations,
     "Temperatur in °C": themaLayer.temperature,
-    "Wind": themaLayer.wind
+    "Wind": themaLayer.wind,
+    "Schneehöhe": themaLayer.snow
 }).addTo(map);
 
 // Maßstab
@@ -89,6 +91,25 @@ function showWind(geojson) {
     }).addTo(themaLayer.wind);
 }
 
+async function showSnow(geoJSON) {
+    L.geoJSON(geoJSON, {
+        filter: function (feature) {
+            if (feature.properties.HS > 0 && feature.properties.HS < 10000) {
+                return true;
+            }
+
+        },
+        pointToLayer: function (feature, latlng) {
+            return L.marker(latlng, {
+                icon: L.divIcon({
+                    html: `<span style="background-color: ${getColor(feature.properties.HS, COLORS.snow)}">${feature.properties.HS.toFixed(0)}mm</span>`,
+                    className: "aws-div-icon",
+                })
+            });
+        }
+    }).addTo(themaLayer.snow);
+}
+
 
 
 // GeoJSON der Wetterstationen laden
@@ -128,18 +149,8 @@ async function showStations(url) {
     }).addTo(themaLayer.stations);
     showTemperature(geojson);
     showWind(geojson);
+    showSnow(geojson);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
